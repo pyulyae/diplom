@@ -1,0 +1,495 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta content="IE=edge"
+        http-equiv="X-UA-Compatible"/>
+  <meta content="width=device-width, initial-scale=1.0"
+        name="viewport"/>
+  <title>Disk</title>
+</head>
+<body>
+<header class="header">
+  <div class="wrapper">
+    <a class="logo-link"
+       href="/classifications">
+      <img alt="Disk"
+           class="logo-link__logo"
+           src="assets/images/logo.png"/>
+      <span class="logo-link__title">Classifications</span>
+    </a>
+    <form class="find-form">
+      <input (ngModelChange)="getFiles($event)"
+             [(ngModel)]="searchString"
+             [ngModelOptions]="{standalone: true}"
+             class="find-form__input"
+             placeholder="Search Files"
+             type="text"/>
+    </form>
+    <a (click)="logout()"
+       class="profile-link">
+      <img alt="John Smith"
+           class="profile-link__avatar avatar"
+           src="/assets/images/avatar.png"/>
+    </a>
+  </div>
+</header>
+<main class="main">
+  <div class="sidebar">
+    <div class="page-list">
+    </div>
+  </div>
+  <div class="content">
+    <div class="content__header">
+      <h2 class="content__heading">Files</h2>
+      <div class="content-menu">
+        <button class="content-menu-btn content-menu-btn-file" *ngIf="currentRole === role.ADMIN">
+          <span class="content-menu-btn__title">ADD FILE</span>
+          <div class="content-menu-btn__icon">
+            <div class="arrow-icon">
+              <svg height="16"
+                   width="16">
+                <use xlink:href="./assets/icons/add.svg#add-icon"></use>
+              </svg>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div class="files-list">
+      <div class="files-list__header" (click)="sortObjects()">
+        <button class="files-list-filter-btn">
+          <span class="files-list-filter-btn__title">Name</span>
+          <div class="files-list-filter-btn__icon">
+            <svg height="16"
+                 width="16">
+              <use xlink:href="./assets/icons/arrow.svg#arrow-icon"></use>
+            </svg>
+          </div>
+        </button>
+        <div class="files-list-filter-title files-list-filter-title--last-moidified">Classification</div>
+        <div class="files-list-filter-title files-list-filter-title--downloads">Downloads</div>
+      </div>
+      <div (click)="loadAllSelectors()"
+           *ngFor="let document of documents">
+        <div class="file-item">
+          <div class="file-item__icon">
+            <div class="file-icon">
+              <img src="./assets/icons/icons8-file.svg">
+            </div>
+          </div>
+          <h4 class="file-item__heading">{{document.name}}</h4>
+          <span class="file-item__date">{{document.classification?.name}}</span>
+          <span class="file-item__downloads-count">{{document.downloads}}</span>
+          <div (click)="selectFile(document)"
+               class="file-item-menu" [ngStyle]="currentRole !== role.ADMIN ? {'margin-left': '60px'} : null">
+            <button class="file-item-menu__update-btn">
+              <svg height="15"
+                   width="15">
+                <use xlink:href="./assets/icons/download-file-icon.svg#download-icon"></use>
+              </svg>
+            </button>
+            <button class="file-item-menu__delete-btn" *ngIf="currentRole === role.ADMIN">
+              <svg height="15"
+                   width="15">
+                <use xlink:href="./assets/icons/delete-file-icon.svg#delete-icon"></use>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="popup-window popup-window--hidden"
+     id="upload-popup">
+  <div class="popup-window__popup popup popup--upload">
+    <button class="popup__close-btn">
+      <svg height="24"
+           width="24">
+        <use xlink:href="./assets/icons/close-icon-upload.svg#close-icon"></use>
+      </svg>
+    </button>
+    <h2 class="popup__heading">Upload and attach files</h2>
+    <h3 class="popup__subheading">Upload and attach files to this project.</h3>
+    <div>
+      <div class="popup__dropdown-container container">
+        <div class="dropdown">
+          <div class="select">
+            <span>{{!!this.selectedLanguage ? this.selectedLanguage.name : 'Choose language'}}</span>
+            <div class="icon">
+              <svg
+                height="25px"
+                id="up-icon"
+                id="Layer_1"
+                style="enable-background: new 0 0 512 512"
+                version="1.1"
+                viewBox="0 0 512 512"
+                width="25px"
+                xml:space="preserve"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <polygon points="396.6,352 416,331.3 256,160 96,331.3 115.3,352 256,201.5 "/>
+                  </svg>
+            </div>
+          </div>
+          <input name="language"
+                 type="hidden"/>
+          <ul class="dropdown-menu">
+            <li (click)="selectLanguage(language)"
+                *ngFor="let language of languages"
+                id="{{language.entityId}}"
+                value="{{language.name}}">{{language.name}}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="popup__dropdown-container container">
+        <div class="dropdown">
+          <div class="select">
+            <span>{{!!this.selectedClassification ? this.selectedClassification.name : 'Choose classification'}}</span>
+            <div class="icon">
+              <svg
+                height="25px"
+                id="up-icon"
+                id="Layer_1"
+                style="enable-background: new 0 0 512 512"
+                version="1.1"
+                viewBox="0 0 512 512"
+                width="25px"
+                xml:space="preserve"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <polygon points="396.6,352 416,331.3 256,160 96,331.3 115.3,352 256,201.5 "/>
+                </svg>
+            </div>
+          </div>
+          <input name="language"
+                 type="hidden"/>
+          <ul class="dropdown-menu">
+            <li (click)="selectClassification(classification)"
+                *ngFor="let classification of classifications"
+                id="{{classification.entityId}}"
+                value="{{classification.name}}">{{classification.name}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <label class="popup--upload__upload-btn popup-upload-btn">
+      <div class="popup-upload-btn__icon">
+        <svg
+          fill="none"
+          height="46"
+          viewBox="0 0 46 46"
+          width="46"
+          xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#F2F4F7"
+                height="40"
+                rx="20"
+                width="40"
+                x="3"
+                y="3"/>
+          <path
+            d="M19.6667 26.3333L23.0001 23M23.0001 23L26.3334 26.3333M23.0001 23V30.5M29.6667 26.9524C30.6847 26.1117 31.3334 24.8399 31.3334 23.4167C31.3334 20.8854 29.2814 18.8333 26.7501 18.8333C26.568 18.8333 26.3976 18.7383 26.3052 18.5814C25.2185 16.7374 23.2121 15.5 20.9167 15.5C17.465 15.5 14.6667 18.2982 14.6667 21.75C14.6667 23.4718 15.363 25.0309 16.4892 26.1613"
+            stroke="#475467"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.66667"/>
+          <rect height="40"
+                rx="20"
+                stroke="#F9FAFB"
+                stroke-width="6"
+                width="40"
+                x="3"
+                y="3"/>
+        </svg>
+      </div>
+      <span *ngIf="!inputFile"
+            class="popup-upload-btn__heading">
+            <span>Click to upload</span> or drag and drop DOC, DOCX, TXT, PDF AND RTF
+      </span>
+      <span *ngIf="inputFile"
+            class="popup-upload-btn__heading">
+            {{inputFile.name}}
+      </span>
+      <input (change)="onFileSelected($event)"
+             id="file-input"
+             name="file"
+             style="display: none"
+             type="file"/>
+    </label>
+    <a class="error" *ngIf="errorMessage">{{errorMessage}}</a>
+    <div class="popup__menu">
+      <button class="popup__cancel-btn">Cancel</button>
+      <button (click)="saveFile()"
+              class="popup__confirm-btn">Confirm
+      </button>
+    </div>
+  </div>
+</div>
+<div class="popup-window popup-window--hidden"
+     id="download-popup">
+  <div class="popup">
+    <h3 class="popup__heading">Sure you want to download?</h3>
+    <div class="popup__menu">
+      <div (click)="downloadFile()"
+           *ngIf="isLanguageOk(selectedDocument)"
+           class="popup__select">{{getLanguage(selectedDocument)}}</div>
+    </div>
+  </div>
+</div>
+<div class="popup-window popup-window--hidden"
+     id="update-popup">
+  <div class="popup">
+    <button class="popup__close-btn">
+      <svg height="24"
+           width="24">
+        <use xlink:href="./assets/icons/close-icon-upload.svg#close-icon"></use>
+      </svg>
+    </button>
+    <div class="popup__icon">
+      <svg
+        fill="none"
+        height="56"
+        viewBox="0 0 56 56"
+        width="56"
+        xmlns="http://www.w3.org/2000/svg">
+        <rect fill="#D1FADF"
+              height="48"
+              rx="24"
+              width="48"
+              x="4"
+              y="4"/>
+        <path
+          d="M23.5 28L26.5 31L32.5 25M38 28C38 33.5228 33.5228 38 28 38C22.4772 38 18 33.5228 18 28C18 22.4772 22.4772 18 28 18C33.5228 18 38 22.4772 38 28Z"
+          stroke="#039855"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"/>
+        <rect height="48"
+              rx="24"
+              stroke="#ECFDF3"
+              stroke-width="8"
+              width="48"
+              x="4"
+              y="4"/>
+      </svg>
+    </div>
+    <h3 class="popup__heading">File updated</h3>
+    <p class="popup__text">
+      This blog post has been published. Team members will be able to edit this post and
+      republish changes.
+    </p>
+    <div class="popup__menu">
+      <button class="popup__cancel-btn">Cancel</button>
+      <button (click)="closePopupWindow(popupWindowUpdate)"
+              class="popup__confirm-btn">Confirm
+      </button>
+    </div>
+  </div>
+</div>
+<div class="popup-window popup-window--hidden"
+     id="delete-popup">
+  <div class="popup">
+    <button class="popup__close-btn">
+      <svg height="24"
+           width="24">
+        <use xlink:href="./assets/icons/close-icon-upload.svg#close-icon"></use>
+      </svg>
+    </button>
+    <div class="popup__icon">
+      <svg
+        fill="none"
+        height="56"
+        viewBox="0 0 56 56"
+        width="56"
+        xmlns="http://www.w3.org/2000/svg">
+        <rect fill="#FEE4E2"
+              height="48"
+              rx="24"
+              width="48"
+              x="4"
+              y="4"/>
+        <path
+          d="M32 22V21.2C32 20.0799 32 19.5198 31.782 19.092C31.5903 18.7157 31.2843 18.4097 30.908 18.218C30.4802 18 29.9201 18 28.8 18H27.2C26.0799 18 25.5198 18 25.092 18.218C24.7157 18.4097 24.4097 18.7157 24.218 19.092C24 19.5198 24 20.0799 24 21.2V22M26 27.5V32.5M30 27.5V32.5M19 22H37M35 22V33.2C35 34.8802 35 35.7202 34.673 36.362C34.3854 36.9265 33.9265 37.3854 33.362 37.673C32.7202 38 31.8802 38 30.2 38H25.8C24.1198 38 23.2798 38 22.638 37.673C22.0735 37.3854 21.6146 36.9265 21.327 36.362C21 35.7202 21 34.8802 21 33.2V22"
+          stroke="#D92D20"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"/>
+        <rect height="48"
+              rx="24"
+              stroke="#FEF3F2"
+              stroke-width="8"
+              width="48"
+              x="4"
+              y="4"/>
+      </svg>
+    </div>
+    <h3 class="popup__heading">Delete File</h3>
+    <p class="popup__text">
+      Are you sure you want to delete this file? This action cannot be undone.
+    </p>
+    <div class="popup__menu">
+      <button class="popup__cancel-btn">Cancel</button>
+      <button (click)="deleteFile()"
+              class="popup__delete-btn">Delete
+      </button>
+    </div>
+  </div>
+</div>
+<div class="popup-window popup-window--hidden"
+     id="translate-available-popup">
+  <div class="popup">
+    <button class="popup__close-btn">
+      <svg height="24"
+           width="24">
+        <use xlink:href="./assets/icons/close-icon-upload.svg#close-icon"></use>
+      </svg>
+    </button>
+    <h2 class="popup__heading">Document translations</h2>
+    <h3 class="popup__subheading">Edit document translations</h3>
+    <div *ngFor="let language of selectedDocument?.languages!"
+         class="popup__select">
+      {{language.name}}
+      <button (click)="downloadFileByLanguage(language.entityId, false)"
+              class="popup-select__download">
+        <svg
+          fill="none"
+          height="15"
+          id="download-icon"
+          viewBox="0 0 15 15"
+          width="15"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            clip-rule="evenodd"
+            d="M2.14296 1.36364C2.14296 0.610521 2.78255 0 3.57153 0H10.7017C11.0806 0 11.4439 0.143668 11.7119 0.3994L14.5817 3.13879C14.8496 3.39452 15.0001 3.74136 15.0001 4.10302V13.6364C15.0001 14.3895 14.3605 15 13.5715 15H3.39296C3.09709 15 2.85725 14.7711 2.85725 14.4886C2.85725 14.2062 3.09709 13.9773 3.39296 13.9773H13.5715C13.7688 13.9773 13.9287 13.8246 13.9287 13.6364V5.11364H11.0715C10.2826 5.11364 9.64296 4.50312 9.64296 3.75V1.02273H3.57153C3.37429 1.02273 3.21439 1.17536 3.21439 1.36364V5.625C3.21439 5.90742 2.97454 6.13636 2.67868 6.13636C2.38281 6.13636 2.14296 5.90742 2.14296 5.625V1.36364ZM10.7144 1.02294V3.75C10.7144 3.93828 10.8743 4.09091 11.0715 4.09091H13.9284C13.9252 4.00489 13.8881 3.92304 13.8241 3.86196L10.9542 1.12258C10.8903 1.06151 10.8045 1.026 10.7144 1.02294ZM6.64889 9.20455L5.14571 7.68002C4.94294 7.47436 4.95321 7.15073 5.16866 6.95717C5.38411 6.76361 5.72315 6.77342 5.92593 6.97908L8.27887 9.36544C8.47301 9.56234 8.47301 9.86948 8.27887 10.0664L5.92593 12.4527C5.72315 12.6584 5.38411 12.6682 5.16866 12.4746C4.95321 12.2811 4.94294 11.9575 5.14571 11.7518L6.64889 10.2273H2.92173C1.89973 10.2273 1.07143 11.0178 1.07143 11.9931V14.1477C1.07143 14.4301 0.831581 14.6591 0.535714 14.6591C0.239848 14.6591 0 14.4301 0 14.1477V11.9931C0 10.4527 1.30821 9.20455 2.92173 9.20455H6.64889Z"
+            fill="#24292E"
+            fill-rule="evenodd"/>
+        </svg>
+      </button>
+      <button (click)="deleteFileByLanguage(language.entityId)" *ngIf="currentRole === role.ADMIN"
+              class="popup-select__delete">
+        <svg
+          fill="none"
+          height="15"
+          id="delete-icon"
+          viewBox="0 0 15 15"
+          width="15"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            clip-rule="evenodd"
+            d="M10.625 5C10.9702 5 11.25 5.27982 11.25 5.625V11.875C11.25 12.9105 10.4105 13.75 9.375 13.75H5.625C4.58947 13.75 3.75 12.9105 3.75 11.875V5.625C3.75 5.27982 4.02982 5 4.375 5H10.625ZM10 6.25H5V11.875C5 12.2202 5.27982 12.5 5.625 12.5H9.375C9.72018 12.5 10 12.2202 10 11.875V6.25ZM5.625 1.875C5.625 1.52982 5.90482 1.25 6.25 1.25H8.75C9.09518 1.25 9.375 1.52982 9.375 1.875V2.5H11.875C12.2202 2.5 12.5 2.77982 12.5 3.125C12.5 3.47018 12.2202 3.75 11.875 3.75H3.125C2.77982 3.75 2.5 3.47018 2.5 3.125C2.5 2.77982 2.77982 2.5 3.125 2.5H5.625V1.875Z"
+            fill="black"
+            fill-rule="evenodd"/>
+        </svg>
+      </button>
+    </div>
+    <div class="popup__menu" *ngIf="currentRole === role.ADMIN">
+      <button class="popup__cancel-btn">Cancel</button>
+      <button (click)="getAvailableLanguages()"
+              class="popup__confirm-btn popup__add-lang-btn">Add language
+      </button>
+    </div>
+  </div>
+</div>
+<div class="popup-window popup-window--hidden"
+     id="translate-unavailable-popup">
+  <div class="popup">
+    <button class="popup__close-btn">
+      <svg height="24"
+           width="24">
+        <use xlink:href="./assets/icons/close-icon-upload.svg#close-icon"></use>
+      </svg>
+    </button>
+    <h2 class="popup__heading">Document translations</h2>
+    <h3 class="popup__subheading">Add document translation</h3>
+    <button class="popup__close-btn">
+      <svg height="24"
+           width="24">
+        <use xlink:href="./assets/icons/close-icon-upload.svg#close-icon"></use>
+      </svg>
+    </button>
+    <div class="popup__dropdown-container container">
+      <div class="dropdown">
+        <div class="select">
+          <span>{{!!this.selectedLanguage ? this.selectedLanguage.name : 'Choose language'}}</span>
+          <div class="icon">
+            <svg
+              height="25px"
+              id="up-icon"
+              id="Layer_1"
+              style="enable-background: new 0 0 512 512"
+              version="1.1"
+              viewBox="0 0 512 512"
+              width="25px"
+              xml:space="preserve"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <polygon points="396.6,352 416,331.3 256,160 96,331.3 115.3,352 256,201.5 "/>
+                </svg>
+          </div>
+        </div>
+        <input name="language"
+               type="hidden"/>
+        <ul class="dropdown-menu">
+          <li (click)="selectLanguage(language)"
+              *ngFor="let language of availableLanguages"
+              id="{{language.entityId}}"
+              value="{{language.name}}">{{language.name}}</li>
+        </ul>
+      </div>
+    </div>
+    <label class="popup--upload__upload-btn popup-upload-btn">
+      <div class="popup-upload-btn__icon">
+        <svg
+          fill="none"
+          height="46"
+          viewBox="0 0 46 46"
+          width="46"
+          xmlns="http://www.w3.org/2000/svg">
+          <rect fill="#F2F4F7"
+                height="40"
+                rx="20"
+                width="40"
+                x="3"
+                y="3"/>
+          <path
+            d="M19.6667 26.3333L23.0001 23M23.0001 23L26.3334 26.3333M23.0001 23V30.5M29.6667 26.9524C30.6847 26.1117 31.3334 24.8399 31.3334 23.4167C31.3334 20.8854 29.2814 18.8333 26.7501 18.8333C26.568 18.8333 26.3976 18.7383 26.3052 18.5814C25.2185 16.7374 23.2121 15.5 20.9167 15.5C17.465 15.5 14.6667 18.2982 14.6667 21.75C14.6667 23.4718 15.363 25.0309 16.4892 26.1613"
+            stroke="#475467"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.66667"/>
+          <rect height="40"
+                rx="20"
+                stroke="#F9FAFB"
+                stroke-width="6"
+                width="40"
+                x="3"
+                y="3"/>
+        </svg>
+      </div>
+      <span *ngIf="!inputFile"
+            class="popup-upload-btn__heading">
+            <span>Click to upload</span> or drag and drop DOC, DOCX, TXT, PDF AND RTF
+      </span>
+      <span *ngIf="inputFile"
+            class="popup-upload-btn__heading">
+            {{inputFile.name}}
+      </span>
+      <input (change)="onFileSelected($event)"
+             id="file-input"
+             name="file"
+             style="display: none"
+             type="file"/>
+    </label>
+    <a class="error" *ngIf="errorMessage">{{errorMessage}}</a>
+    <div class="popup__menu">
+      <button class="popup__cancel-btn">Cancel</button>
+      <button (click)="addFileTranslation()"
+              class="popup__confirm-btn popup__add-lang-btn">Add document
+      </button>
+    </div>
+  </div>
+</div>
+<!--<script src="/assets/scripts/dropdown.js"></script>-->
+<!--<script src="/assets/scripts/popups.js"></script>-->
+</body>
+</html>

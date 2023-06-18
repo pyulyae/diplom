@@ -1,0 +1,37 @@
+<body>
+<form (ngSubmit)="signUp({value : signUpForm.value})" [formGroup]="signUpForm">
+  <header class="header1">
+    <div>
+      <img src="assets/images/logo.png" alt="logo" class="logo">
+      <h1 class="h1">Sign up into your account</h1>
+      <div>
+        <div class="group1">
+          <label>First Name:</label>
+          <input formControlName="name" type="text" placeholder="Ivan">
+        </div>
+        <div class="group2">
+          <label>Last Name:</label>
+          <input formControlName="surname" type="text" placeholder="Ivanov">
+        </div>
+        <div class="group2">
+          <label>Email:</label>
+          <input formControlName="mail" type="email" placeholder="Ivanov@mail.ru">
+        </div>
+        <div class="group1">
+          <label>Password:</label>
+          <input formControlName="password" type="password" placeholder="xxxxxx">
+        </div>
+        <div class="group2">
+          <label>Confirm password:</label>
+          <input formControlName="repeatedPassword" type="password" placeholder="xxxxxx">
+        </div>
+        <p class="dop">...</p>
+        <button type="submit" class="SingUp">Sign up</button>
+      </div>
+    </div>
+    <div>
+      <img src="assets/images/sing.png" alt="sing1" class="sing1">
+    </div>
+  </header>
+</form>
+</body>

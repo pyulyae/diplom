@@ -1,0 +1,119 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Disk</title>
+</head>
+<body>
+<header class="header">
+  <div class="wrapper">
+    <a href="/documents" class="logo-link">
+      <img src="/assets/images/logo.png" alt="Disk" class="logo-link__logo" />
+      <span class="logo-link__title">Files</span>
+    </a>
+    <form class="find-form">
+      <input type="text" placeholder="Search Folders" class="find-form__input"
+      [(ngModel)]="searchString" [ngModelOptions]="{standalone: true}" (ngModelChange)="getClassifications($event)"/>
+    </form>
+    <a (click)="logout()" class="profile-link">
+      <img src="/assets/images/avatar.png" alt="John Smith" class="profile-link__avatar avatar" />
+    </a>
+  </div>
+</header>
+<main class="main">
+  <div class="sidebar">
+    <div class="page-list">
+    </div>
+  </div>
+  <div class="content">
+    <div class="content__header">
+      <h2 class="content__heading">Folders</h2>
+      <div class="content-menu">
+        <button class="content-menu-btn content-menu-btn-classification" *ngIf="currentRole === role.ADMIN">
+          <span class="content-menu-btn__title">ADD CLASSIFICATION</span>
+          <div class="content-menu-btn__icon">
+            <div class="arrow-icon">
+              <svg width="16" height="16">
+                <use xlink:href="./assets/icons/add.svg#add-icon"></use>
+              </svg>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+    <div class="folders-list">
+      <div class="folders-list__header">
+        <button class="folder-list-filter-btn" (click)="sortObjects()">
+          <span class="folder-list-filter-btn__title">Name</span>
+          <div class="folder-list-filter-btn__icon">
+            <svg width="16" height="16">
+              <use xlink:href="./assets/icons/arrow.svg#arrow-icon"></use>
+            </svg>
+          </div>
+        </button>
+<!--        <div class="folder-list-filter-title">Last Modifited</div>-->
+      </div>
+      <div *ngFor="let classification of classifications">
+        <div class="file-item">
+          <h4 class="folder-item__heading"
+              (click)="goToDocuments(classification.entityId!)">{{classification.name}}</h4>
+          <div class="file-item-menu">
+            <button class="file-item-menu__delete-btn" (click)="deleteClassification(classification)"
+                    *ngIf="currentRole === role.ADMIN">
+              <svg width="15" height="15">
+                <use xlink:href="./assets/icons/delete-file-icon.svg#delete-icon"></use>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<div class="popup-window popup-window-classification popup-window--hidden">
+  <div class="popup popup-window__popup classification-popup">
+    <button class="popup__close-btn close-btn">
+      <div class="close-btn__icon">
+        <svg width="25" height="24">
+          <use xlink:href="./assets/icons/close.svg#close-icon"></use>
+        </svg>
+      </div>
+    </button>
+    <h5 class="popup__heading">Sure you want to accept?</h5>
+    <form class="popup__form popup-form classification-form">
+      <label for="" class="popup-form__label">Write classification name</label>
+      <input [(ngModel)]="newClassificationName"
+        type="text"
+        name="folder-title"
+        placeholder="Your Name"
+        class="popup-form__input" />
+      <div class="popup-form__menu">
+        <button class="popup-form__cancel-btn" type="reset">Cancel</button>
+        <button class="popup-form__confirm-btn" type="submit"
+                (click)="saveClassification(newClassificationName)">Confirm</button>
+      </div>
+    </form>
+  </div>
+</div>
+<template id="folder-template">
+  <a href="/classification" class="folder-item">
+    <div class="folder-item__icon">
+      <div class="folder-icon">
+        <svg width="16" height="16">
+          <use xlink:href="./assets/icons/folder.svg#folder-icon"></use>
+        </svg>
+      </div>
+    </div>
+    <h4 class="folder-item__heading">Classification 1</h4>
+    <span class="folder-item__date"> 16/02/2021 </span>
+    <button class="folder-item__delete-btn">
+      <svg width="15" height="15">
+        <use xlink:href="./assets/icons/delete.svg#delete-icon"></use>
+      </svg>
+    </button>
+  </a>
+</template>
+<!--<script src="./scripts/script.js"></script>-->
+</body>
+</html>

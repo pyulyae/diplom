@@ -1,0 +1,25 @@
+<form (ngSubmit)="logIn(loginForm!.value)" [formGroup]="loginForm">
+  <header class="header">
+    <div>
+      <img src="assets/images/Login.png" alt="sing_in" class="sing_in">
+    </div>
+    <div>
+      <img src="assets/images/logo.png" alt="logo" class="logo">
+      <h1 class="h1">Login into your account</h1>
+      <div class="group1">
+        <label>Email:</label>
+        <input type="email" formControlName="login" placeholder="Ivanov@mail.ru">
+      </div>
+      <div class="group2">
+        <label>Password:</label>
+        <input type="password" formControlName="password" placeholder="xxxxxx">
+      </div>
+      <p class="dop">...</p>
+      <a class="error" *ngIf="loginError">{{loginError}}</a>
+      <button type="submit" class="login">Login</button>
+      <img src="assets/images/or.png" alt="or" class="or">
+      <a [routerLink]="'sign-up'" class="sign">Sign up</a>
+      <a [routerLink]="'forgot-password'" class="password">Forgot password?</a>
+    </div>
+  </header>
+</form>

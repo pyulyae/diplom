@@ -1,0 +1,25 @@
+<form (ngSubmit)="verifyEmail(tokenForm!.value)" [formGroup]="tokenForm">
+<header class="header1">
+  <div>
+    <img src="assets/images/logo.png" alt="logo" class="logo">
+    <h1 class="h1">Sing up into your account</h1>
+    <div>
+      <div class="group2">
+        <label for="">Enter the code sent to your email:</label>
+        <input type="text" placeholder="xxxx" formControlName="token">
+      </div>
+      <p class="dop">...</p>
+      <button type="submit" class="enter">Enter</button>
+      <div (click)="sendTokenWhenPossible()" id="time-remainer" class="time">After <span id="deadline-timer">30</span> <span
+        id="min-or-sec"> seconds
+                                                                                                              you
+                                                                                                            can
+                                                                                                            send again</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <img src="assets/images/sing.png" alt="sing1" class="sing1">
+  </div>
+</header>
+</form>
